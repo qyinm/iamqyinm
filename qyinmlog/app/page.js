@@ -1,7 +1,9 @@
+import Aboutme from "./components/Aboutme";
+
 const Home = () => {
   return (
     <main>
-      test
+      <Aboutme />
     </main>
   )
 }
