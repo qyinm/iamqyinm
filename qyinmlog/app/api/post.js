@@ -8,6 +8,14 @@ import readingTime from 'reading-time';
 const BASE_PATH = `/post`;
 const POSTS_PATH = path.join(process.cwd(), BASE_PATH);
 
+export const getAllTags = () => {
+  const posts = getAllPosts();
+
+  return [
+    ...new Set(posts.reduce((acc, curr) => acc.concat(curr.tags), [''])),
+  ].filter(tag => tag !== '');
+};
+
 export const getAllPosts = () => {
   const postPath = sync(`${POSTS_PATH}/**/*.mdx`);
 
