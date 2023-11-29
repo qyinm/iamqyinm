@@ -20,6 +20,10 @@ export default function RootLayout({ children }) {
           type="image/<generated>"
           sizes="<generated>"
         />
+        <meta
+          name="google-site-verification"
+          content="uN6r8wtwmM5jus_sDEYdaP06xZ0jF7NGQ4npFnd2Xnk"
+        />
       </head>
       <body className={'mx-auto max-w-3xl px-6 lg:max-w-4xl lg:px-8'}>
         <Header />
