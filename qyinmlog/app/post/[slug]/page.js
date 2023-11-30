@@ -1,3 +1,4 @@
+import remarkGfm from 'remark-gfm';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import { notFound } from 'next/navigation';
 import Giscus from '@/app/components/global/Giscus';
@@ -18,6 +19,7 @@ const Page = async ({ params }) => {
     options: {
       parseFrontmatter: true,
     },
+    remarkPlugins: [remarkGfm],
   });
   return (
     <>
