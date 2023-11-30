@@ -4,7 +4,7 @@ import Tag from '../components/post/Tag';
 import Card from '../components/post/Card';
 
 const Post = () => {
-  const posts = getAllPosts();
+  const posts = getAllPosts().sort((a, b) => b.date.localeCompare(a.date));
   const tags = getAllTags();
   return (
     <div>
