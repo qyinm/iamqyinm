@@ -9,7 +9,6 @@ const Page = async ({ params }) => {
   const slug = `/post/${[decodeURI(params.slug)].join('/')}`;
   const post = getAllPosts().find(post => post.slug === slug);
 
-  console.log();
   if (!post) {
     return notFound();
   }
