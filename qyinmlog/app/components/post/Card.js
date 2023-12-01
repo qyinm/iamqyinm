@@ -17,7 +17,9 @@ const Card = ({ post }) => {
           />
         </div>
         <div className="mt-3 ml-3 w-full flex flex-col justify-around justify-items-center content-center">
-          <p></p>
+          <Link className="hover:drop-shadow-base" href={"/series/"+post.series}>
+            <p className="text-md font-bold">{post.series}</p>
+          </Link>
           <Link className="hover:drop-shadow-base" href={postLink}>
             <p className="text-xl font-bold">{post.title}</p>
             <p className="text-tertiary mt-1"></p>
