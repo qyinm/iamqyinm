@@ -1,0 +1,91 @@
+---
+title: '2023-11-27'
+description: 'TIL'
+icon: ''
+image: ''
+tags:
+  - 'JPA'
+draft: false
+date: 2023-11-27 20:02:58
+series: 'TIL'
+thumbnail: '/image/bg1.png'
+---
+
+# TIL/2023-11-27
+
+EAGER말고 LAZY로 전부 연관 관계 매핑해라
+
+XToOne (ManyToOne, OneToOne) 는 fetch 전략이 기본 EAGER이다 ⇒ LAZY
+
+`@PersistenceContext`: jpa entity manage 주입해줌 entityfactory 사용 안해도 됨. ⇒ spring boot jpa가 @Autowired로 di 가능하게 해줌
+
+`@PersistenceUnit`: entityfactory 주입
+
+`@Repository`: spring bean 등록 해줌. 
+
+`@Transactional(readOnly = true)`: 읽기만 하는 거면 readonly 걸어서 리소스 및 부하를 줄인다. spring에 있는 어노테이션 쓰셈;
+
+`@Autowired`: 필드 인젝션
+
+`@RequiredArgsConstructor` : private final 필드 di 함.
+
+persist 한다고 무조건 insert문이 나가지는 않음 왜냐? commit 할 때 flush하면서 insert 되는 거임 persist는 영속화 시켜주는 것. 1차 캐시에 박히고 sql 쓰기 지연 저장소에 박힘.
+
+junit5에서 안되는 junit4: expected
+
+`@Test(expected = IllegalStateException.class)` => junit4에서만 가능함
+
+junit5에서는 
+
+```
+assertThrows(IllegalStateException.class, () -> {
+            memberService.join(member2);
+        });
+```
+
+요런식으로? 푸하할..
+
+test: test에서 db in memory 할 수 있다 h2 사이트 들어가서 치트 시트보셈. 그리고 운영 환경에 맞게 yml 파일 나누는게 맞다!
+
+cascade 범위? : 프라이빗 오너인 경우 쓰면 좋다. cascade 되는 엔티티가 여러곳에서 참조 되면 cascade 사용하면 안좋다. 라이프 사이클이 같아야함. 차라리 안쓰다가 리팩토링 하면서 넣는게 좋다.
+
+동적 쿼리: 
+
+- 문자열 더하기로 분기 만들기
+- Criteria라는 jpa 공식 지원 라이브러리? 기능 사용하기
+- **QueryDsl 영한님이 추천하는 것 개꿀티비**
+
+BindingResult: valid 에러시 .hasErrors 시 true
+
+이 기능으로 회원가입 or form 에러 확인 가능해서 타임리프에서 그에 맞는 것들 볼 수 있음
+
+```java
+@PostMapping("/members/new")
+    public String create(@Valid MemberForm form, BindingResult result) {
+
+        if (result.hasErrors()) {
+            return "members/createMemberForm";
+        }
+
+        Address address = new Address(form.getCity(), form.getStreet(), form.getZipcode());
+
+        Member member = new Member();
+        member.setName(form.getName());
+        member.setAddress(address);
+
+        memberService.join(member);
+        return "redirect:/";
+    }
+```
+
+```html
+<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+            Incorrect date
+          </p>
+```
+
+th:errors에 name에 에러 메시지 뽑아서 보여줌.
+
+스프링이랑 타임리프랑 좀 잘맞누…
+
+api 만들때 주의사항: entity를 바로 내보내지마라. api 반환은 스펙인데 entity는 계속 변함 그래서 dto나 form 같은 객체 사용해라
