@@ -13,11 +13,14 @@ const Card = ({ post }) => {
         <div className="sm:mr-4 sm:w-3/5 w-full">
           <img
             src={post.thumbnail}
-            className="sm:w-[32vw] sm:h-[24vh] sm:rounded-l-lg sm:rounded-r-none w-full rounded-t-lg"
+            className="sm:w-[32vw] sm:h-[24vh] sm:rounded-l-lg sm:rounded-r-none w-full rounded-t-lg object-cover"
           />
         </div>
         <div className="mt-3 ml-3 w-full flex flex-col justify-around justify-items-center content-center">
-          <Link className="hover:drop-shadow-base" href={"/series/"+post.series}>
+          <Link
+            className="hover:drop-shadow-base"
+            href={'/series/' + post.series}
+          >
             <p className="text-md font-bold">{post.series}</p>
           </Link>
           <Link className="hover:drop-shadow-base" href={postLink}>
