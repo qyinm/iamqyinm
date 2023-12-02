@@ -1,0 +1,176 @@
+---
+title: '2023-12-01'
+description: 'TIL'
+icon: ''
+image: ''
+tags:
+  - 'JPA'
+draft: false
+date: 2023-12-02 19:45:22
+series: 'TIL'
+thumbnail: '/image/bg1.png'
+---
+
+# TIL/2023-12-02
+
+# SuperBuilder
+
+```java
+package jpabook.jpashop.domain.item;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@DiscriminatorValue("B")
+@Getter @Setter
+@SuperBuilder
+public class Book extends Item {
+
+    private String author;
+    private String isbn;
+}
+```
+
+```java
+package jpabook.jpashop.domain.item;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.ManyToMany;
+import jpabook.jpashop.domain.Category;
+import jpabook.jpashop.exception.NotEnoughStockException;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
+public abstract class Item {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "item_id")
+    private Long id;
+
+    private String name;
+    private int price;
+    private int stockQuantity;
+
+    @ManyToMany(mappedBy = "items")
+    private List<Category> categories = new ArrayList<>();
+
+    // ==비즈니스 로직==//
+    // stock 증가
+    public void addStock(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    // stock 감소
+    public void removeStock(int quantity) {
+        int restStock = this.stockQuantity - quantity;
+        if (restStock < 0) {
+            throw new NotEnoughStockException("재고수량이 부족합니다.");
+        }
+        this.stockQuantity = restStock;
+    }
+}
+```
+
+Book에 Builder패턴을 적용시키고 싶어서 그냥 Builder 어노테이션을 넣었는데 안됨. Builder 어노테이션이 부모클래스의 필드 까지 인식 하지 못해서이고, 하고 싶다면 super 메서드를 사용 하거나 아니면 부모와 자식에 SuperBuilder 어노테이션을 각각 넣어주면된다.
+
+# 변경 감지와 병합
+
+영속상태는 상태 변경 감지로 db반영이됨.
+
+## 준영속 엔티티 : jpa 영속성 컨테스트가 더는 관리하지 않는 것.
+
+ex) 데이터 베이스에 한번 들어갔다 온 아이: pk 가지고 있는 아이
+
+### 준영속 엔티티 수정방법
+
+- 변경 감지 기능 사용
+  ```java
+  @Transactional
+  public void updateItem(Long itemId, Book param) {
+      // dirty check
+      Item findItem = itemRepository.findOne(itemId);
+      findItem.setPrice(param.getPrice());
+  }
+  ```
+- 병합(merge) 사용
+  ```java
+  public void save(Item item) {
+      if (item.getId() == null) {
+          em.persist(item);
+      } else {
+          em.merge(item);
+      }
+  }
+  ```
+  merge() 실행 → 1차캐시 or DB가져오기 → 파라미터 값 전부다 바꿔치기 해줌 → 변경완료!
+  merge 파라미터로 보낸 엔티티는 영속성으로 되지 않음. 반환 값이 영속성임.
+  merge사용시 commit을 하기 때문에 sql 지연 쓰기 쿼리들 전부다 나감.
+
+### merge 주의 사항
+
+update 하는 필드 값 null 이여도 그냥 null로 바꿈.
+
+그냥 전부다 치환하기 때문. ⇒ 방지하려면 데이터 입력에서 부터 전부다 통제해야함 exception 발생가능성
+
+그래서 merge 하기 보다는 변경 감지 하는 게 더 좋다!
+
+### Best Practice
+
+엔티티 변경시 항상 dirty checking 해라
+
+Controller 레이어에서 엔티티 생성 하지마라 오히려 별로 안좋을 수 있음.
+
+값 변경시 필요한 부분만 가져오는 것이 낫다. (DTO로 보내든~)
+
+# 실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발
+
+[수료증.pdf](https://prod-files-secure.s3.us-west-2.amazonaws.com/272a32b9-1f5e-4158-b469-a73b85e0ff2a/80880b86-76ef-4556-b90b-8e5e65040c47/910965-324119-12294327.pdf)
+
+오늘JPA 실무완전 로드맵 중 영한님이 기본편보다 먼저 보는게 좋다고 해서 들었다.
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/272a32b9-1f5e-4158-b469-a73b85e0ff2a/72dad30d-8c86-4102-b47f-e32c144f1dfc/Untitled.png)
+
+사실 로드맵에서는 기본편이 앞에 있지만 영한님이 먼저 더 듣는게 좋다고 하니깐!(심지어 책도 있음)
+
+![영한님 유튜브(https://www.youtube.com/@yhdev)](https://prod-files-secure.s3.us-west-2.amazonaws.com/272a32b9-1f5e-4158-b469-a73b85e0ff2a/1e398e55-dd68-4f6f-b604-66d1eee93f1a/Untitled.png)
+
+영한님 유튜브(https://www.youtube.com/@yhdev)
+
+## 듣고 난 후 느낀점
+
+책이 있어서 이미 알고 있는 내용이 대부분이었고 중간에 동적 쿼리 부분에 대한 내용이 있었는 데 사실 query dsl을 쓰지 않을 때 얼마나 불편한지 알게 해주는 부분이다(~~Query DSL의 빌드업?)~~
+
+강의 전반부에 이미 JPA로직 및 테스트 코드 작성이 끝나서 나머지 부분은 Controller View 작업이라 조금 지루했다.
+
+사실 React 같은 프론트엔드 프레임워크를 사용해서 개발하는 경우가 더 많아서 지루하게 느낀 좀 오만한 것 같다.
+
+활용 2 부터는 api 개발 rest api를 이용하니 깐 좀 더 실제 서비스에 적용할 만 할 것 같다. (사실 API 아니여도 핵심은 JPA기 때문에… 상관은 없는…)
+
+## 앞으로
+
+아무튼 영한님이 추천하신 순서대로 다음은 JPA 기본편과 책이랑 같이 병행해서 공부할 예정이다.
+
+책에서 읽었던 내용을 말과 코드로 설명 해주시니깐 좀 더 이해가 잘되는 것 같다.
