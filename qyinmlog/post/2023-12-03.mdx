@@ -35,9 +35,9 @@ JPA는 인터페이스의 모음.
 - 유지보수
 - 패러다임 불일치 해결
 - 성능
-    - 1차 캐시, 동일성 보장(같은 트랜잭션 內)
-    - 쓰기 지연 commit 후 데이터베이스에 sql 모은 것을 보냄
-    - 지연 로딩, 즉시 로딩(LAZY, EAGER)
+  - 1차 캐시, 동일성 보장(같은 트랜잭션 內)
+  - 쓰기 지연 commit 후 데이터베이스에 sql 모은 것을 보냄
+  - 지연 로딩, 즉시 로딩(LAZY, EAGER)
 
 ## 그래도
 
@@ -70,7 +70,7 @@ JPA 중요 2가지:
 
 추상적인 개념
 
-엔티티 매니저를 통해 영속성 컨텍스트 접근 
+엔티티 매니저를 통해 영속성 컨텍스트 접근
 
 ### 엔티티 생명주기
 
@@ -98,11 +98,11 @@ em.remove(member);
 
 ### **1차 캐시**
 
-![Untitled](https://github.com/iamseungwoo/iamqyinm/assets/80995345/a33934e9-6aa4-4e04-aef2-4d9f241a5084)
+![Untitled](/image/2023-12-03/Untitled.png)
 
-![Untitled (1)](https://github.com/iamseungwoo/iamqyinm/assets/80995345/ff5bede7-c9e2-49d2-86a3-73a8a530f6f9)
+![Untitled (1)](/image/2023-12-03/Untitled_1.png)
 
-![Untitled (2)](https://github.com/iamseungwoo/iamqyinm/assets/80995345/665ec903-8706-43d6-8d9b-c98b1473ec25)
+![Untitled (2)](/image/2023-12-03/Untitled_2.png)
 
 1차 캐시안에 찾는 값이 있으면 select query x → 캐시에서 가져옴.
 
@@ -112,25 +112,25 @@ em.remove(member);
 
 ### **영속 엔티티의 동일성 보장**
 
-![Untitled (3)](https://github.com/iamseungwoo/iamqyinm/assets/80995345/7efa3748-f4c9-4a74-9a7a-561dd486e48f)
+![Untitled (3)](/image/2023-12-03/Untitled_3.png)
 
 같은 트랜잭션 내에서 동일성 보장해준다
 
 ### **엔티티 등록 - 트랜잭션을 지원하는 쓰기 지연**
 
-persist 한다고 바로 insert query 날리지 않고, 쓰기지연 SQL 저장소에 넣음. 
+persist 한다고 바로 insert query 날리지 않고, 쓰기지연 SQL 저장소에 넣음.
 
 tx.commit 하는 순간 데이터 베이스로 한꺼번에 쿼리문 날림( ⇒ jdbc batch라는 기능)
 
-![Untitled (4)](https://github.com/iamseungwoo/iamqyinm/assets/80995345/824393f1-a9ef-4f0f-8fcd-bbeb7bd2e9cc)
+![Untitled (4)](/image/2023-12-03/Untitled_4.png)
 
-![Untitled (5)](https://github.com/iamseungwoo/iamqyinm/assets/80995345/b4ae79fd-4487-4abd-8935-3c7579fd6291)
+![Untitled (5)](/image/2023-12-03/Untitled_5.png)
 
 ### 변경 감지(Dirty Checking)
 
 영속 상태의 객체의 값이 바뀔 경우. 커밋할 때(트랜잭션 변경 시점) 엔티티와 스냅샷(영속성 컨텍스트 불러올 때 최초의 값) 비교, 변경 시 → update query 쓰기 지연 SQL 저장소에 생성
 
-![Untitled (6)](https://github.com/iamseungwoo/iamqyinm/assets/80995345/2faff5b7-964c-4e40-9ebe-5cb204f20399)
+![Untitled (6)](/image/2023-12-03/Untitled_6.png)
 
 ### 지연로딩 (LAZY, EAGER)
 
@@ -160,7 +160,7 @@ flush 실행방법
 
 em.setFlushMode(FlushModeType.COMMIT)
 
-- [FlushModeType.AUTO](http://FlushModeType.AUTO) : 커밋이나 쿼리를 실행할 때 플러시(기본값)
+- FlushModeType.AUTO : 커밋이나 쿼리를 실행할 때 플러시(기본값)
 - FlushModeType.COMMIT: 커밋할 때만 플러시
 
 가급적 디폴트값, 건들지 말자
