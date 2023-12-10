@@ -26,6 +26,8 @@ export default function RootLayout({ children }) {
         />
         {/* new domain qyinm.com */}
         <meta name="google-site-verification" content="8QhudNtMbibg206kBXKG8AzhKlZUnxnBFKT-33cD6nw" />
+        {/* naver search console */}
+        <meta name="naver-site-verification" content="a138ad1aed864a9ed637a3d4577e923463d55d7c" />
       </head>
       <body className={'mx-auto max-w-3xl px-6 lg:max-w-4xl lg:px-8'}>
         <Header />
