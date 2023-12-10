@@ -24,6 +24,8 @@ export default function RootLayout({ children }) {
           name="google-site-verification"
           content="uN6r8wtwmM5jus_sDEYdaP06xZ0jF7NGQ4npFnd2Xnk"
         />
+        {/* new domain qyinm.com */}
+        <meta name="google-site-verification" content="8QhudNtMbibg206kBXKG8AzhKlZUnxnBFKT-33cD6nw" />
       </head>
       <body className={'mx-auto max-w-3xl px-6 lg:max-w-4xl lg:px-8'}>
         <Header />
