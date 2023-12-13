@@ -103,3 +103,14 @@ body {
   --tw-border-opacity: 1;
   border-color: rgb(64 64 64 / var(--tw-border-opacity));
 }
+/* code highlighting */
+.hljs {
+  color: #c9d1d9;
+  background: #0d1117;
+}
+
+pre:has(.hljs),
+.hljs {
+  color: #c9d1d9;
+  background: #0d1117;
+}
