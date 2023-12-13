@@ -7,7 +7,7 @@ const PostTitle = ({ post }) => {
         {post.title}
       </h1>
       <div className="mt-2 flex justify-center gap-1">
-        <Link href={`/blog/${post.series}`}>
+        <Link href={`/series/${post.series}`}>
           <span className="text-sm font-medium underline sm:text-base">
             {post.series}
           </span>

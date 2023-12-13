@@ -1,0 +1,135 @@
+---
+title: '[BOJ] 2011 암호코드'
+description: ''
+icon: ''
+image: ''
+tags:
+  - BOJ
+  - DP
+draft: false
+date: 2023-12-13 20:19:27
+series: 'Alogrithm'
+thumbnail: '/image/bojlogo.png'
+---
+
+# [BOJ] 2011 암호코드
+
+---
+
+# 문제 설명
+
+## 문제
+
+상근이와 선영이가 다른 사람들이 남매간의 대화를 듣는 것을 방지하기 위해서 대화를 서로 암호화 하기로 했다. 그래서 다음과 같은 대화를 했다.
+
+- 상근: 그냥 간단히 암호화 하자. A를 1이라고 하고, B는 2로, 그리고 Z는 26으로 하는거야.
+- 선영: 그럼 안돼. 만약, "BEAN"을 암호화하면 25114가 나오는데, 이걸 다시 글자로 바꾸는 방법은 여러 가지가 있어.
+- 상근: 그렇네. 25114를 다시 영어로 바꾸면, "BEAAD", "YAAD", "YAN", "YKD", "BEKD", "BEAN" 총 6가지가 나오는데, BEAN이 맞는 단어라는건 쉽게 알수 있잖아?
+- 선영: 예가 적절하지 않았네 ㅠㅠ 만약 내가 500자리 글자를 암호화 했다고 해봐. 그 때는 나올 수 있는 해석이 정말 많은데, 그걸 언제 다해봐?
+- 상근: 얼마나 많은데?
+- 선영: 구해보자!
+
+어떤 암호가 주어졌을 때, 그 암호의 해석이 몇 가지가 나올 수 있는지 구하는 프로그램을 작성하시오.
+
+## 입력
+
+첫째 줄에 5000자리 이하의 암호가 주어진다. 암호는 숫자로 이루어져 있다.
+
+## 출력
+
+나올 수 있는 해석의 가짓수를 구하시오. 정답이 매우 클 수 있으므로, 1000000으로 나눈 나머지를 출력한다.
+
+암호가 잘못되어 암호를 해석할 수 없는 경우에는 0을 출력한다.
+
+## 예제 입력 1
+
+```
+25114
+```
+
+## 예제 출력 1
+
+```
+6
+```
+
+## 예제 입력 2
+
+```
+1111111111
+```
+
+## 예제 출력 2
+
+```
+89
+```
+
+# 사고 과정
+
+crypt : 입력 값
+
+n : crypt의 길이
+
+함수 valid(char) → bool : char을 입력받아서 숫자로 변경 and 알파벳 구간 내면 true 반환 아니면 false
+
+crypt를 문자열로 입력을 받아서 현재 문자를 가리키는 index가 만약 1 이상 26 이하면 다음 index도 탐색,
+
+- 만약 현재 문자가 valid 하지 않다면 바로 0 반환
+  - 길이가 1일 때 valid하지 않은 경우는 0일 때 인데, 0은 valid 하지 않은데 길이가 2개일 때 06, 07 등으로 valid 통과가 돼서 이런 경우는 허락하지 않으니 바로 0으로 반환 해줌.
+- 만약 index가 n - 2 이하 라면 그 다음 인덱스 까지 포함한 암호(연속한 문자 2개)가 1이상 26이면 2칸 뒤의 index도 탐색
+
+이렇게 탐색해서 index가 n - 1일 때 문자가 valid 하다면 현재 메모이 제이션 값이 1로 변경
+
+## 반성
+
+처음에는 현재 문자가 valid 하지 않으면 바로 0을 반환 하지 않았는 데 이때문에 2자리 숫자에서 06, 05 같이 valid 처리가 됐다. 이런 경우는 당연히 valid 되면 안되는 데 통과가 되는 거라서 답이 틀렸다.
+
+# 구현 코드
+
+## TOP-DOWN
+
+```python
+import sys
+sys.setrecursionlimit(10**6)
+
+MOD = 1_000_000
+
+def valid(numstr):
+    num = int(numstr)
+
+    return 0 < num and num < 27
+
+def dp(crypt, cache, idx, n):
+    if idx >= n:
+        return 0
+    if cache[idx] != -1:
+        return cache[idx] % MOD
+
+    cache[idx] = 0
+    if not valid(crypt[idx]):
+        return cache[idx]
+
+    cache[idx] += dp(crypt, cache, idx + 1, n) % MOD
+    if idx == n - 1:
+        cache[idx] = 1
+
+    if idx < n - 1 and valid(crypt[idx:idx+2]):
+        cache[idx] += dp(crypt, cache, idx + 2, n) % MOD
+        if idx == n - 2:
+            cache[idx] += 1
+
+    return cache[idx]
+
+def main():
+    crypt = input()
+    n = len(crypt)
+    cache = [-1 for _ in range(n)]
+
+    ans = dp(crypt, cache, 0, n) % MOD
+
+    print(ans)
+
+if __name__ == "__main__":
+    main()
+```
