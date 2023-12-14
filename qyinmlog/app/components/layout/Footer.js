@@ -16,7 +16,7 @@ const Footer = () => {
             <BiLogoGmail />
           </Link>
           <Link
-            href="https://github.com/iamseungwoo"
+            href="https://github.com/qyinm"
             className="text-primary transition hover:text-secondary"
             target="_blank"
             rel="noopener noreferrer"
