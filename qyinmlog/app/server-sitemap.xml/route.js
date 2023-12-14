@@ -5,7 +5,7 @@ export async function GET(request) {
   const postLinks = getAllPosts().map(post => post.slug);
   const postsUrl = postLinks.map(link => {
     return {
-      ioc: `https://www.qyinm.com${link}`,
+      loc: `https://www.qyinm.com${link}`,
       lastmod: new Date().toISOString(),
       changefreq: 'always',
       priority: 1,
