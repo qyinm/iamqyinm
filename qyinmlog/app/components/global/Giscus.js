@@ -14,7 +14,7 @@ const Giscus = () => {
     scriptElem.src = 'https://giscus.app/client.js';
     scriptElem.async = true;
     scriptElem.crossOrigin = 'anonymous';
-    scriptElem.setAttribute('data-repo', 'iamseungwoo/blogComment');
+    scriptElem.setAttribute('data-repo', 'qyinm/blogComment');
     scriptElem.setAttribute('data-repo-id', 'R_kgDOKzdmtw');
     scriptElem.setAttribute('data-category', 'General');
     scriptElem.setAttribute('data-category-id', 'DIC_kwDOKzdmt84CbW1r');

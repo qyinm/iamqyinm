@@ -5,7 +5,7 @@ import Tag from './Tag';
 // import TagBox from './tag/TagBox';
 
 const Card = ({ post }) => {
-  const postLink = post.slug.replace('/posts/', `/article/`);
+  const postLink = post.slug;
 
   return (
     <div className="text-ye group w-full mt-3 p-4 py-4 hover:drop-shadow-base">
