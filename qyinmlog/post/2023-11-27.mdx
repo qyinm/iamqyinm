@@ -1,13 +1,14 @@
 ---
 title: '2023-11-27'
-description: 'TIL'
+description: ''
 icon: ''
 image: ''
 tags:
   - 'JPA'
+  - 'Java'
 draft: false
 date: 2023-11-27 20:02:58
-series: 'TIL'
+series: '실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발'
 thumbnail: '/image/bg1.png'
 ---
 
@@ -21,7 +22,7 @@ XToOne (ManyToOne, OneToOne) 는 fetch 전략이 기본 EAGER이다 ⇒ LAZY
 
 `@PersistenceUnit`: entityfactory 주입
 
-`@Repository`: spring bean 등록 해줌. 
+`@Repository`: spring bean 등록 해줌.
 
 `@Transactional(readOnly = true)`: 읽기만 하는 거면 readonly 걸어서 리소스 및 부하를 줄인다. spring에 있는 어노테이션 쓰셈;
 
@@ -35,7 +36,7 @@ junit5에서 안되는 junit4: expected
 
 `@Test(expected = IllegalStateException.class)` => junit4에서만 가능함
 
-junit5에서는 
+junit5에서는
 
 ```
 assertThrows(IllegalStateException.class, () -> {
@@ -49,7 +50,7 @@ test: test에서 db in memory 할 수 있다 h2 사이트 들어가서 치트 �
 
 cascade 범위? : 프라이빗 오너인 경우 쓰면 좋다. cascade 되는 엔티티가 여러곳에서 참조 되면 cascade 사용하면 안좋다. 라이프 사이클이 같아야함. 차라리 안쓰다가 리팩토링 하면서 넣는게 좋다.
 
-동적 쿼리: 
+동적 쿼리:
 
 - 문자열 더하기로 분기 만들기
 - Criteria라는 jpa 공식 지원 라이브러리? 기능 사용하기
@@ -79,9 +80,7 @@ BindingResult: valid 에러시 .hasErrors 시 true
 ```
 
 ```html
-<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
-            Incorrect date
-          </p>
+<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
 ```
 
 th:errors에 name에 에러 메시지 뽑아서 보여줌.
