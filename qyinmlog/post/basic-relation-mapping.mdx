@@ -1,0 +1,142 @@
+---
+title: '연관관계 매핑 기초'
+description: ''
+icon: ''
+image: ''
+tags:
+  - 'JPA'
+  - 'Java'
+draft: false
+date: 2023-12-15 16:10:29
+series: '자바 ORM 표준 JPA 프로그래밍 - 기본편'
+thumbnail: '/image/kyh_jpa_basic.png'
+---
+
+# 연관관계 매핑 기초
+
+## 객체를 테이블에 맞춰 모델링
+
+```java
+// select
+Member findMember = em.find(Member.class, member.getId());
+
+// 연관관계 없음
+Team findTeam = em.find(Team.class, team.getId());
+```
+
+식별자로 다시 조회 → 데이터 중심 구조
+
+테이블은 외래 키 조인으로 연관 테이블 find ↔ 객체는 참조를 이용해 연관 객체 find
+
+## 객체 지향 모델링
+
+```java
+Team team = new Team();
+team.setName("TeamA");
+em.persist(team);
+
+Member = new Member();
+member.setName("member1");
+member.setTeam(team); // 단방향 연관관계 설정, 참조 저장
+em.persist(member);
+```
+
+# 양방향 연관관계
+
+Team에
+
+```java
+@OneToMany(mappedBy = "team")
+List<Member> member = new ArrayList<Member>();
+```
+
+추가
+
+→ List 선언시 생성 해줌으로 add 시 NullPointerException 피함
+
+## 연관관계의 주인관계 mappedBy
+
+### 객체와 테이블이 관계를 맺는 차이
+
+- 객체 연관관계 = 2개
+  - 회원 → 팀 (단방향)
+  - 팀 → 회원 (단방향)
+- 테이블 연관관계 = 1개
+  - 회원 ↔ 팀의 연관관계 1개(양방향)
+  외래 키 하나로 JOIN
+
+### 객체 양방향 관계
+
+- 단방향 2개를 양방향이라 부름
+- 양방향 참조 시 단방향 연관관계 2개 필요
+
+![김영한 - 자바 ORM 표준 JPA 프로그래밍 - 기본편 강의 자료](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/bb90b28d-859d-4c75-a765-160e950ea0af/Untitled.png?id=ab9480ca-a1a8-4ec6-86b9-f5abacd037c1&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702713600000&signature=2ft45K4U2Q0K_JW7_NuAt3Kz-3zvzXi6U5PMwzRh94U&downloadName=Untitled.png)
+
+김영한 - 자바 ORM 표준 JPA 프로그래밍 - 기본편 강의 자료
+
+Member의 Team 값을 바꿀 때 어떻게 해야할까?
+
+→ Team의 members 변경? Member의 team 변경?
+
+→ DB는 Member의 외래 키만 변경하면 됨.
+
+→ 주인 하나를 정해서 변경!
+
+### 연관관계의 주인(Owner)
+
+************************\*\*************************양방향 매핑 규치************************\*\*************************
+
+- 객체의 두 관계중
+- 연관관계의 주인만이 외래 키를 관리(등록, 수정)
+- 주인이 아닌쪽은 읽기만 가능
+
+**누구를 주인으로?**
+
+외래 키가 있는 곳을 주인으로
+
+ex) Team, Member 중 Member을 주인으로
+
+다대일 (N:1) 관계에서 N이 주인
+
+![Untitled](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/7f7cba8a-05d2-4b63-9b62-57c31fd8f651/Untitled.png?id=b940ef64-4f16-47ff-ba16-ce427425bd8f&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702713600000&signature=ntXEBVvpNhW-DFphO4ETthqbn278o9GR36WKtdRBNa4&downloadName=Untitled.png)
+
+### 양방향 매핑 실수
+
+- 연관관계 주인에 값 입력 x
+  주인의 FK에 값이 안들어감
+  ```java
+  Team team = new Team();
+  team.setName("TeamA");
+  em.persist(team);
+
+  Member member = new Member();
+  member.setName("member1");
+
+  //역방향(주인이 아닌 방향)만 연관관계 설정
+  team.getMembers().add(member);
+
+  em.persist(member)
+  ```
+  db에서 member1 보면 team_id 없음
+- 순수 객체 관계 고려시 항상 양 객체에 값 추가 필요
+  → 안할 때 문제
+  - em.flush, em.clear 같이 db 반영하지 않으면 SQL쓰기지연에만 쿼리문이 있고 객체는 1차캐시에만 있기 때문에 team의 getMembers() 시 값이 없음(add를 안해주면)
+  - 테스트 코드 작성 시 JPA 없이 순수 자바 코드로 돌리는 경우가 있는 데 이때 문제 발생
+- 연관관계 편의 메소드 생성
+  매번 양쪽 값을 추가 하는 것을 잊을 수 있으니, 한쪽에 추가하면 다른 쪽에도 추가할 수 있는 메소드로 생성
+- 양방향 매핑 시 무한 루프 조심
+  - ex: toString(), lombok, JSON 생성 라이브러리
+  - toString 지양, JSON 생성 라이브러리는 컨트롤러에서 엔티티 반환 x(DTO 변환해서 JSON 반환)
+
+# 정리
+
+- 단방향 매핑만으로 연관관계 매핑은 완료됨.
+- 양방향 매핑은 반대 방향으로 조회(객체 그래프 탐색) 기능이 추가된 것 뿐
+- JPQL에서 역방향으로 탐색할 일이 많음
+- 단방향 매핑을 잘 하고 양방향은 필요할 때 추가해도 됨(테이블에 영향을 주지 않음)
+
+## 연관관계의 주인을 정하는 기준
+
+- 비즈니스 로직을 기준으로 연관관계의 주인 선택 x
+- 연관관계 주인은 외래 키의 위치를 기준으로 정함
+
