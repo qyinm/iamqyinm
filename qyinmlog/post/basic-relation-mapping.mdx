@@ -70,7 +70,7 @@ List<Member> member = new ArrayList<Member>();
 - 단방향 2개를 양방향이라 부름
 - 양방향 참조 시 단방향 연관관계 2개 필요
 
-![김영한 - 자바 ORM 표준 JPA 프로그래밍 - 기본편 강의 자료](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/bb90b28d-859d-4c75-a765-160e950ea0af/Untitled.png?id=ab9480ca-a1a8-4ec6-86b9-f5abacd037c1&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702713600000&signature=2ft45K4U2Q0K_JW7_NuAt3Kz-3zvzXi6U5PMwzRh94U&downloadName=Untitled.png)
+![김영한 - 자바 ORM 표준 JPA 프로그래밍 - 기본편 강의 자료](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/bb90b28d-859d-4c75-a765-160e950ea0af/Untitled.png?id=ab9480ca-a1a8-4ec6-86b9-f5abacd037c1&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702821600000&signature=b4SkoTpnIOcEkrsrziPgUUynEUMQSDA1D7vr_ASojfY&downloadName=Untitled.png)
 
 김영한 - 자바 ORM 표준 JPA 프로그래밍 - 기본편 강의 자료
 
@@ -83,8 +83,7 @@ Member의 Team 값을 바꿀 때 어떻게 해야할까?
 → 주인 하나를 정해서 변경!
 
 ### 연관관계의 주인(Owner)
-
-************************\*\*************************양방향 매핑 규치************************\*\*************************
+**양방향 매핑 규칙**
 
 - 객체의 두 관계중
 - 연관관계의 주인만이 외래 키를 관리(등록, 수정)
@@ -98,7 +97,7 @@ ex) Team, Member 중 Member을 주인으로
 
 다대일 (N:1) 관계에서 N이 주인
 
-![Untitled](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/7f7cba8a-05d2-4b63-9b62-57c31fd8f651/Untitled.png?id=b940ef64-4f16-47ff-ba16-ce427425bd8f&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702713600000&signature=ntXEBVvpNhW-DFphO4ETthqbn278o9GR36WKtdRBNa4&downloadName=Untitled.png)
+![Untitled](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/7f7cba8a-05d2-4b63-9b62-57c31fd8f651/Untitled.png?id=b940ef64-4f16-47ff-ba16-ce427425bd8f&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702821600000&signature=RlKE_QvO2e0OAYdQbnQFlnVOe0KQseVUWU2M_-rctPQ&downloadName=Untitled.png)
 
 ### 양방향 매핑 실수
 
