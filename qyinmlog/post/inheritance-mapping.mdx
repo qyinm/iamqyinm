@@ -1,0 +1,92 @@
+---
+title: '상속관계 매핑'
+description: ''
+icon: ''
+image: ''
+tags:
+  - 'JPA'
+draft: false
+date: 2023-12-16 00:00:00
+series: '자바 ORM 표준 JPA 프로그래밍 - 기본편'
+thumbnail: '/image/kyh_jpa_basic.png'
+---
+
+# 상속관계 매핑
+
+- 관계형 데이터베이스는 상속 관계X
+- 슈퍼타입 서브타입 관계라는 모델링 기법이 객체 상속과 유사
+- 상속관계 매핑: 객체의 상속과 구조와 DB의 슈퍼타입 서브타입 관계를 매핑
+
+![Untitled](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/e2e5894b-5f85-4f27-8362-f7452c7cf35c/Untitled.png?id=168f70ec-c76b-4fc1-9579-14157d2975b7&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702828800000&signature=RrdAE46L_eCtHKgha2tV-7QgRqnxwzff0HRaC1_fTNA&downloadName=Untitled.png)
+
+- 슈퍼타입 서브타입 논리 모델을 실제 물리 모델로 구현방법
+  - 조인 전략 → 각각 테이블로 변환
+  - 단일 테이블 전략 → 통합 테이블로 변환
+  - 구현 클래스마다 테이블 전략 → 서브타입 테이블로 변환
+
+## 주요 어노테이션
+
+- @Inheritance([strategy=InheritanceType.XXX](http://strategy%3Dinheritancetype.xxx/))
+  - JOINED: 조인 전략
+  - SINGLE_TABLE: 단일 테이블 전략
+  - TABLE_PER_CLASS: 구현 클래스마다 테이블 전략
+- @DiscriminatorColumn(name=“DTYPE”)
+- @DiscriminatorValue(“XXX”): 기본 값 Entity 이름
+
+## 조인 전략
+
+![Untitled](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/0502c2a8-45dd-4d04-af37-6d47300b2ea4/Untitled.png?id=59cac324-e05d-4b79-b42f-022d0f60ab9c&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702828800000&signature=RQmITBSMUKpQLJpG03rX3dvDXTtKGgEU8Jj2r7fErHA&downloadName=Untitled.png)
+
+조인해서 값 가져옴 (DTYPE)
+
+insert 할 때 2개의 쿼리가 나간다
+
+객체지향 정석적
+
+- 장점:
+  - 테이블 정규화
+  - 외래 키 참조 무결성 제약조건 활용가능
+  - 저장공간 효율화
+- 단점:
+  - 조회 시 조인을 많이 사용, 성능 저하
+  - 조회 쿼리가 복잡함
+  - 데이터 저장 시 INSERT SQL 2번 호출
+
+## 단일 테이블 전략
+
+![Untitled](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/a8de39a3-035b-46b5-9969-3e38dc37f663/Untitled.png?id=727a691f-ec24-4d68-aba1-638ef51ff45d&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702828800000&signature=5MxAXnZ8xMa7p5OYUjGc5xoBJ-vZTvXKfuFOejP8OvQ&downloadName=Untitled.png)
+
+하나의 테이블안에 다 때려 박음.
+
+DTYPE에 따라 사용하는 데이터가 다름
+
+조회 쿼리가 단순함
+
+자식 엔티티 컬럼 nullable
+
+테이블 너무 커진다
+
+## 구현 클래스마다 테이블 전략
+
+![Untitled](https://file.notion.so/f/f/272a32b9-1f5e-4158-b469-a73b85e0ff2a/5b3f83df-ea65-453a-88b3-77e04bfcebb4/Untitled.png?id=fec32c3d-d604-494b-8957-533fc10a1fda&table=block&spaceId=272a32b9-1f5e-4158-b469-a73b85e0ff2a&expirationTimestamp=1702828800000&signature=ibNgnchgQZVB91z8D3aztJ923S5rkBMnpt9y8fvSIGo&downloadName=Untitled.png)
+
+구현 클래스 마다 각각 테이블을 만들어준다
+
+부모 클래스로 캐스팅 하고 조회하면 모든 테이블 union해서 조회함.
+
+→ 비효율..
+
+쓰지말자…
+
+## 어떤 걸 써야할 까?
+
+조인이나 단일 테이블 전략 쓰면 될 듯?
+
+조인이 basic, 단순하면 단일 테이블
+
+# @MappedSuperclass
+
+- 공통 매핑 정보가 필요할 때 사용(id, name)
+  → 속성만 상속 받고 싶을 때
+- Entity 아님
+- 직접 생성해서 사용안하니 추상 클래스 권장
