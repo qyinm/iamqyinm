@@ -1,0 +1,114 @@
+---
+title: '[BOJ] 17404 RGB거리 2'
+description: ''
+icon: ''
+image: ''
+tags:
+  - BOJ
+  - DP
+draft: false
+date: 2023-12-17 20:19:27
+series: 'Alogrithm'
+thumbnail: '/image/bojlogo.png'
+---
+
+# [BOJ] 2011 암호코드
+
+---
+
+# 문제 설명
+
+## 문제
+
+RGB거리에는 집이 N개 있다. 거리는 선분으로 나타낼 수 있고, 1번 집부터 N번 집이 순서대로 있다.
+
+집은 빨강, 초록, 파랑 중 하나의 색으로 칠해야 한다. 각각의 집을 빨강, 초록, 파랑으로 칠하는 비용이 주어졌을 때, 아래 규칙을 만족하면서 모든 집을 칠하는 비용의 최솟값을 구해보자.
+
+1번 집의 색은 2번, N번 집의 색과 같지 않아야 한다.
+N번 집의 색은 N-1번, 1번 집의 색과 같지 않아야 한다.
+i(2 ≤ i ≤ N-1)번 집의 색은 i-1, i+1번 집의 색과 같지 않아야 한다.
+
+## 입력
+
+첫째 줄에 집의 수 N(2 ≤ N ≤ 1,000)이 주어진다. 둘째 줄부터 N개의 줄에는 각 집을 빨강, 초록, 파랑으로 칠하는 비용이 1번 집부터 한 줄에 하나씩 주어진다. 집을 칠하는 비용은 1,000보다 작거나 같은 자연수이다.
+
+## 출력
+
+첫째 줄에 모든 집을 칠하는 비용의 최솟값을 출력한다.
+
+# 사고 과정
+
+## 변수
+
+- cache: memoization 저장 변수
+- graph: rgb 칠하는 비용
+- n: 집의 개수
+- dp: 문제 푸는 함수
+  - row: 방 번호
+  - col: 해당 방이 선택한 RGB
+  - start: 첫번 째 방이 선택한 RGB
+
+## 아이디어
+
+- dp 함수를 돌면서
+  - row == n-1 일 때
+    - col == start 라면 최대값 반환(방문 할 수 없음을 뜻함)
+    - col != start 라면 cache[row][col] = graph[row][col] 메모이제이션 후 반환
+  - cache[row][col] 값이 있다면(방문하지 했을 때, 메모이제이션 됐을 때) 값을 반환한다.
+  - 현재 col 아닌 0 ~ 2 사이 값을 골라 다음 방으로 간다
+- main 함수에서
+  - n과 graph 같은 기본 데이터 입력
+  - 첫번 째 방이 선택하는 RGB에 따라서 값이 달라지므로 cache를 매번 첫번 째 방이 RGB 선택시 초기화한다.
+
+# 구현 코드
+
+## TOP-DOWN
+
+```kotlin
+import kotlin.math.*
+
+lateinit var graph: Array<IntArray>
+lateinit var cache: Array<IntArray>
+var n = 0
+
+fun dp(row: Int, col: Int, start: Int): Int {
+    if (row == n - 1) {
+        if (col == start) {
+            return 987654321
+        }
+        cache[row][col] = graph[row][col]
+        return cache[row][col]
+    }
+
+    if (cache[row][col] != -1) {
+        return cache[row][col]
+    }
+    cache[row][col] = 987654321
+
+    for (i in 0..2) {
+        if (i == col) {
+            continue
+        }
+        cache[row][col] = min(dp(row + 1, i, start) + graph[row][col], cache[row][col])
+    }
+
+    return cache[row][col]
+}
+
+fun main() = with(System.`in`.bufferedReader()) {
+    n = readLine().toInt()
+    graph = Array(n) {
+        readLine().split(" ").map { it.toInt() }.toIntArray()
+    }
+
+    var ans = 987654321
+    for (i in 0..2) {
+        cache = Array(n) {
+            IntArray(n) {-1}
+        }
+        ans = min(ans, dp(0, i, i))
+    }
+    println(ans)
+
+}
+```
