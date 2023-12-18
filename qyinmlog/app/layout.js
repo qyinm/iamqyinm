@@ -43,6 +43,7 @@ export default function RootLayout({ children }) {
         <meta name="description" content="qyinm log" />
         <meta name="author" content="qyinm" />
         <meta name="keyword" content="backend, java, jpa, spring" />
+        <meta name="google-adsense-account" content="ca-pub-2698685047331512"></meta>
       </head>
       <body className={'mx-auto max-w-3xl px-6 lg:max-w-4xl lg:px-8'}>
         <Header />
